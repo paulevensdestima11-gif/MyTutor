@@ -1,0 +1,32 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+
+# Secrets
+.env
+.env.*
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+
+# Local database and backups
+instance/
+*.db
+*.db-backup
+*.backup
+
+# Operating system
+.DS_Store
+Thumbs.db
