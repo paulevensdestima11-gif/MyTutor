@@ -1,4 +1,5 @@
 import os
+from aws_secrets import get_database_url
 
 
 class Config:
@@ -7,10 +8,12 @@ class Config:
     if not SECRET_KEY:
         raise RuntimeError("SECRET_KEY environment variable is required")
 
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL",
-        "sqlite:///tutorflow.db"
+    SQLALCHEMY_DATABASE_URI = (
+            os.getenv("DATABASE_URL")
+            or get_database_url()
+            or "sqlite:///tutorflow.db"
     )
+
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

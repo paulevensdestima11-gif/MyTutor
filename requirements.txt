@@ -30,3 +30,8 @@ typing_extensions==4.16.0
 tzdata==2026.6
 Werkzeug==3.1.9
 WTForms==3.3.2
+
+boto3==1.43.125
+botocore==1.43.125
+jmespath==1.1.0
+s3transfer==0.19.3
