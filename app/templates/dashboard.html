@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | MyTutorFlow{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">{{ _('welcome') }}</h2>
+
+<div class="row g-3 mb-4">
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted">{{ _('total_students') }}</h6>
+                <h2>{{ total_students }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted">{{ _('upcoming_lessons') }}</h6>
+                <h2>{{ upcoming_lessons|length }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted">{{ _('pending_homework') }}</h6>
+                <h2>{{ pending_homework }}</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4">
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                Upcoming Lessons
+            </div>
+
+            <div class="card-body">
+                {% if upcoming_lessons %}
+                    {% for lesson in upcoming_lessons %}
+                        <div class="border-bottom py-2">
+                            <strong>{{ lesson.topic }}</strong>
+                            <br>
+                            <small>{{ lesson.student.name }}</small>
+                            <br>
+                            <small class="text-muted">
+                                {{ lesson.start_at.strftime('%d.%m.%Y %H:%M') }}
+                            </small>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted mb-0">No upcoming lessons.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                Recently Added Students
+            </div>
+
+            <div class="card-body">
+                {% if recent_students %}
+                    {% for student in recent_students %}
+                        <div class="border-bottom py-2">
+                            <strong>{{ student.name }}</strong>
+                            <br>
+                            <small class="text-muted">
+                                Level: {{ student.level }}
+                            </small>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted mb-0">No students registered yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="mt-4">
+    <a href="{{ url_for('students.add') }}" class="btn btn-primary">
+        Add Student
+    </a>
+
+    <a href="{{ url_for('lessons.add') }}" class="btn btn-success">
+        Schedule Lesson
+    </a>
+
+    <a href="{{ url_for('homework.add') }}" class="btn btn-secondary">
+        Assign Homework
+    </a>
+</div>
+
+{% endblock %}

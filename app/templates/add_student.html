@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Add Student | TutorFlow{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+
+                <h2 class="mb-4">Register a Student</h2>
+
+                <form method="POST">
+
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="mb-3">
+                        <label class="form-label">Student Name *</label>
+                        <input
+                            type="text"
+                            name="name"
+                            class="form-control"
+                            required
+                            maxlength="120"
+                        >
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control"
+                            maxlength="150"
+                        >
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">English Level *</label>
+
+                        <select name="level" class="form-select" required>
+                            <option value="A1">A1 - Beginner</option>
+                            <option value="A2">A2 - Elementary</option>
+                            <option value="B1">B1 - Intermediate</option>
+                            <option value="B2">B2 - Upper Intermediate</option>
+                            <option value="C1">C1 - Advanced</option>
+                            <option value="C2">C2 - Proficient</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Learning Goals</label>
+
+                        <textarea
+                            name="goals"
+                            class="form-control"
+                            rows="4"
+                            placeholder="Describe the student's learning objectives..."
+                        ></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            Save Student
+                        </button>
+
+                        <a href="{{ url_for('students.index') }}"
+                           class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

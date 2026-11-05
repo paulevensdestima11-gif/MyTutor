@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Schedule Lesson | TutorFlow{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+
+                <h2 class="mb-4">Schedule a Lesson</h2>
+
+                {% if students %}
+
+                <form method="POST">
+
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="mb-3">
+                        <label class="form-label">Student *</label>
+
+                        <select name="student_id" class="form-select" required>
+                            <option value="">Select a student</option>
+
+                            {% for student in students %}
+                            <option value="{{ student.id }}">
+                                {{ student.name }} ({{ student.level }})
+                            </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Lesson Topic *</label>
+
+                        <input type="text"
+                               name="topic"
+                               class="form-control"
+                               maxlength="150"
+                               placeholder="e.g. Present Perfect"
+                               required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date *</label>
+
+                            <input type="date"
+                                   name="date"
+                                   class="form-control"
+                                   required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Time *</label>
+
+                            <input type="time"
+                                   name="time"
+                                   class="form-control"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Duration *</label>
+
+                        <select name="duration" class="form-select" required>
+                            <option value="30">30 minutes</option>
+                            <option value="45">45 minutes</option>
+                            <option value="60" selected>60 minutes</option>
+                            <option value="90">90 minutes</option>
+                            <option value="120">120 minutes</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+
+                        <textarea name="notes"
+                                  class="form-control"
+                                  rows="4"
+                                  placeholder="Preparation, materials or additional notes..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        Schedule Lesson
+                    </button>
+
+                    <a href="{{ url_for('lessons.index') }}"
+                       class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+
+                </form>
+
+                {% else %}
+
+                    <p class="text-muted">
+                        You need to register a student before scheduling a lesson.
+                    </p>
+
+                    <a href="{{ url_for('students.add') }}"
+                       class="btn btn-primary">
+                        Add Student
+                    </a>
+
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

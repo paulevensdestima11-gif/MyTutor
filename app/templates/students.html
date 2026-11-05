@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Students | TutorFlow{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Students</h2>
+
+    <a href="{{ url_for('students.add') }}" class="btn btn-primary">
+        + Add Student
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        {% if students %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>English Level</th>
+                        <th>Learning Goals</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.email or '-' }}</td>
+                        <td>
+                            <span class="badge bg-primary">
+                                {{ student.level }}
+                            </span>
+                        </td>
+                        <td>{{ student.goals or '-' }}</td>
+                        <td>
+                            {% if student.active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+            <p class="text-muted mb-0">
+                No students registered yet. Add your first student.
+            </p>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
