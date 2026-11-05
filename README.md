@@ -19,6 +19,9 @@ The project focuses on building a maintainable application architecture and prog
 - **Dashboard:** Access the main tutoring management interface.
 - **Database Migrations:** Manage database schema changes with Flask-Migrate and Alembic.
 - **Form Security:** CSRF protection using Flask-WTF.
+- **Containerisation:** Package and run the application using Docker.
+- **Production-style Application Server:** Run the application using Gunicorn.
+- **Persistent Storage:** Store SQLite database files using Docker named volumes.
 - **Testing:** Automated tests using pytest.
 
 ## 3. Technology Stack
@@ -27,10 +30,12 @@ The project focuses on building a maintainable application architecture and prog
 |---|---|
 | Programming language | Python |
 | Web framework | Flask |
+| Application server | Gunicorn |
 | Database ORM | SQLAlchemy |
 | Current database | SQLite |
 | Database migrations | Alembic / Flask-Migrate |
 | Form security | Flask-WTF |
+| Containerisation | Docker |
 | Authentication | Planned |
 | Testing | pytest |
 | Version control | Git / GitHub |
@@ -67,10 +72,12 @@ MyTutorFlow/
 │
 ├── migrations/
 ├── tests/
+├── .dockerignore
+├── .gitignore
+├── Dockerfile
 ├── config.py
 ├── requirements.txt
-├── run.py
-└── .gitignore
+└── run.py
 ```
 
 The application uses separate modules for database models, routes, templates and extensions to support maintainability and future expansion.
@@ -127,7 +134,95 @@ python run.py
 
 Open the local address displayed in the terminal.
 
-## 6. Testing
+## 6. Run with Docker
+
+TutorFlow can also run inside a Docker container using Gunicorn.
+
+### Prerequisites
+
+- Docker Desktop
+- Docker Engine running
+
+### Build the Docker image
+
+```powershell
+docker build -t tutorflow:1.0 .
+```
+
+### Create persistent database storage
+
+```powershell
+docker volume create tutorflow_data
+```
+
+### Generate an application secret
+
+```powershell
+$secret = python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+
+### Start the container
+
+```powershell
+docker run -d --name tutorflow -p 8000:8000 -e "SECRET_KEY=$secret" -v tutorflow_data:/app/instance tutorflow:1.0
+```
+
+Clear the temporary secret variable:
+
+```powershell
+$secret = $null
+```
+
+### Apply database migrations
+
+```powershell
+docker exec tutorflow flask --app run:app db upgrade
+```
+
+### Access the application
+
+Open:
+
+```text
+http://localhost:8000
+```
+
+### Verify the container
+
+```powershell
+docker ps
+docker logs tutorflow
+docker exec tutorflow whoami
+```
+
+The application runs using a non-root Linux user (`appuser`) inside the container.
+
+### Stop and restart the container
+
+```powershell
+docker stop tutorflow
+docker start tutorflow
+```
+
+The named Docker volume preserves the SQLite database across container stops and restarts.
+
+### Docker implementation
+
+The Docker configuration includes:
+
+- Custom Dockerfile based on Python 3.14 slim.
+- Gunicorn application server.
+- Two Gunicorn workers.
+- Non-root container execution.
+- Environment-based secret configuration.
+- Persistent SQLite storage using Docker volumes.
+- `.dockerignore` to exclude local environments, secrets and unnecessary files from the image.
+
+The Docker image and container have been built and tested locally.
+
+**Note:** This is a local container deployment. AWS hosting and managed database integration remain planned development tasks.
+
+## 7. Testing
 
 Run the automated test suite:
 
@@ -135,7 +230,7 @@ Run the automated test suite:
 pytest -v
 ```
 
-## 7. Cloud Engineering Roadmap
+## 8. Cloud Engineering Roadmap
 
 The next development phase focuses on transforming TutorFlow into a cloud-hosted application using AWS.
 
@@ -144,14 +239,14 @@ The next development phase focuses on transforming TutorFlow into a cloud-hosted
 | Application hosting | AWS EC2 |
 | Database | Amazon RDS PostgreSQL |
 | Infrastructure as Code | Terraform |
-| Containerisation | Docker |
 | Cloud CLI | AWS CLI |
 | Secrets management | AWS Secrets Manager |
 | Monitoring | Amazon CloudWatch |
 | CI/CD | GitHub Actions |
 | Application language | Python |
+| Containerisation | Docker (implemented locally) |
 
-### Planned architecture
+### Planned AWS architecture
 
 ```text
 Developer
@@ -179,7 +274,7 @@ Supporting services:
 
 This architecture is a development target, not a claim of an existing AWS deployment.
 
-## 8. Security and Development Priorities
+## 9. Security and Development Priorities
 
 The project will progressively implement:
 
@@ -194,7 +289,7 @@ The project will progressively implement:
 
 **Current limitation:** Authentication has not yet been implemented. The current application is a development baseline and is not ready for public production use or real student data.
 
-## 9. Application Screenshots
+## 10. Application Screenshots
 
 ### Dashboard
 
@@ -212,14 +307,14 @@ The project will progressively implement:
 
 ![TutorFlow Homework](docs/screenshots/homework.png)
 
-## 10. Technical Documentation
+## 11. Technical Documentation
 
 - [System Architecture](docs/architecture.md)
 - [Security Documentation](docs/security.md)
 
 These documents describe the current application architecture, planned AWS deployment and security improvements.
 
-## 11. Project Objective
+## 12. Project Objective
 
 TutorFlow is both a practical software project and a portfolio demonstration of cloud engineering skills.
 
@@ -228,6 +323,7 @@ The objective is to demonstrate the ability to:
 - Develop a modular Python web application.
 - Manage relational databases and migrations.
 - Apply application security principles.
+- Containerise applications using Docker.
 - Automate infrastructure using Terraform.
 - Deploy applications on AWS.
 - Build CI/CD pipelines.
