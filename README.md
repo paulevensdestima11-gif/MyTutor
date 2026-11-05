@@ -46,6 +46,7 @@ MyTutorFlow/
 │   ├── models/
 │   │   └── __init__.py
 │   ├── routes/
+│   │   ├── __init__.py
 │   │   ├── dashboard.py
 │   │   ├── students.py
 │   │   ├── lessons.py
@@ -54,6 +55,15 @@ MyTutorFlow/
 │   ├── static/
 │   ├── extensions.py
 │   └── __init__.py
+│
+├── docs/
+│   ├── architecture.md
+│   ├── security.md
+│   └── screenshots/
+│       ├── dashboard.png
+│       ├── students.png
+│       ├── lessons.png
+│       └── homework.png
 │
 ├── migrations/
 ├── tests/
@@ -69,7 +79,7 @@ The application uses separate modules for database models, routes, templates and
 
 ### Prerequisites
 
-- Python 3.11 or newer
+- Python 3.14.4 (tested)
 - Git
 
 ### Clone the repository
@@ -184,7 +194,32 @@ The project will progressively implement:
 
 **Current limitation:** Authentication has not yet been implemented. The current application is a development baseline and is not ready for public production use or real student data.
 
-## 9. Project Objective
+## 9. Application Screenshots
+
+### Dashboard
+
+![TutorFlow Dashboard](docs/screenshots/dashboard.png)
+
+### Student Management
+
+![TutorFlow Student Management](docs/screenshots/students.png)
+
+### Lesson Management
+
+![TutorFlow Lessons](docs/screenshots/lessons.png)
+
+### Homework Management
+
+![TutorFlow Homework](docs/screenshots/homework.png)
+
+## 10. Technical Documentation
+
+- [System Architecture](docs/architecture.md)
+- [Security Documentation](docs/security.md)
+
+These documents describe the current application architecture, planned AWS deployment and security improvements.
+
+## 11. Project Objective
 
 TutorFlow is both a practical software project and a portfolio demonstration of cloud engineering skills.
 
