@@ -125,7 +125,8 @@ ROLLBACK_CONTAINER="tutorflow-rollback-$(date +%Y%m%d%H%M%S)"
 
 echo "Starting production cutover..."
 
-# Remove candidate to release the application port
+# Stop and remove the validated candidate before production cutover
+docker stop "$CANDIDATE_CONTAINER"
 docker rm "$CANDIDATE_CONTAINER"
 
 # Stop existing production container
