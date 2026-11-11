@@ -5,7 +5,7 @@ data "aws_ssm_parameter" "al2023_ami" {
 
 # EC2 application server
 resource "aws_instance" "tutorflow" {
-  ami           = data.aws_ssm_parameter.al2023_ami.value
+  ami           = "ami-01376afa3e7def694"
   instance_type = "t3.micro"
 
   subnet_id                   = aws_subnet.public.id
