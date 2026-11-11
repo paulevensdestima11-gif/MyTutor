@@ -23,6 +23,13 @@ echo "Starting TutorFlow deployment..."
 # ==========================================
 
 IMAGE_TAG="${1:?Usage: deploy.sh <image-tag>}"
+
+# Accept only Git commit SHA tags (40 hexadecimal characters)
+if [[ ! "$IMAGE_TAG" =~ ^[a-fA-F0-9]{40}$ ]]; then
+  echo "ERROR: Image tag must be a 40-character Git commit SHA."
+  exit 1
+fi
+
 IMAGE="${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
 
 echo "Deployment image: ${IMAGE}"
@@ -40,7 +47,18 @@ docker pull "$IMAGE"
 echo "Image successfully pulled."
 
 # ==========================================
-# 3. Preserve production configuration
+# 3. Health-check function
+# ==========================================
+
+check_health() {
+  local base_url="$1"
+
+  curl --fail --silent "$base_url/" > /dev/null &&
+  curl --fail --silent "$base_url/students/" > /dev/null
+}
+
+# ==========================================
+# 4. Preserve production configuration
 # ==========================================
 
 umask 077
@@ -60,7 +78,7 @@ for variable in SECRET_KEY DATABASE_SECRET_ARN AWS_REGION; do
 done
 
 # ==========================================
-# 4. Start candidate container
+# 5. Start candidate container
 # ==========================================
 
 docker rm -f "$CANDIDATE_CONTAINER" 2>/dev/null || true
@@ -75,14 +93,13 @@ docker run --detach \
 echo "Candidate container started."
 
 # ==========================================
-# 5. Validate candidate
+# 6. Validate candidate
 # ==========================================
 
 CANDIDATE_HEALTHY=false
 
 for attempt in $(seq 1 30); do
-  if curl --fail --silent \
-    "http://127.0.0.1:${CANDIDATE_PORT}/" > /dev/null; then
+  if check_health "http://127.0.0.1:${CANDIDATE_PORT}"; then
     CANDIDATE_HEALTHY=true
     break
   fi
@@ -101,7 +118,7 @@ fi
 echo "Candidate validation successful."
 
 # ==========================================
-# 6. Prepare production cutover
+# 7. Prepare production cutover
 # ==========================================
 
 ROLLBACK_CONTAINER="tutorflow-rollback-$(date +%Y%m%d%H%M%S)"
@@ -125,7 +142,7 @@ if ! docker rename "$APP_CONTAINER" "$ROLLBACK_CONTAINER"; then
 fi
 
 # ==========================================
-# 7. Start new production container
+# 8. Start new production container
 # ==========================================
 
 if ! docker run --detach \
@@ -145,14 +162,13 @@ if ! docker run --detach \
 fi
 
 # ==========================================
-# 8. Validate production
+# 9. Validate production
 # ==========================================
 
 HEALTHY=false
 
 for attempt in $(seq 1 30); do
-  if curl --fail --silent \
-    "http://127.0.0.1:${APP_PORT}/" > /dev/null; then
+  if check_health "http://127.0.0.1:${APP_PORT}"; then
     HEALTHY=true
     break
   fi
@@ -162,7 +178,7 @@ for attempt in $(seq 1 30); do
 done
 
 # ==========================================
-# 9. Automatic rollback if necessary
+# 10. Automatic rollback if necessary
 # ==========================================
 
 if [ "$HEALTHY" != "true" ]; then
@@ -177,7 +193,7 @@ if [ "$HEALTHY" != "true" ]; then
 fi
 
 # ==========================================
-# 10. Deployment successful
+# 11. Deployment successful
 # ==========================================
 
 echo "Production deployment successful."
