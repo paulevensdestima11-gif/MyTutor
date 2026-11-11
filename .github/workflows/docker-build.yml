@@ -1,0 +1,24 @@
+
+name: TutorFlow Docker Build
+
+on:
+  workflow_run:
+    workflows: ["TutorFlow CI"]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  docker-build:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Build Docker image
+        run: docker build -t tutorflow:ci .
